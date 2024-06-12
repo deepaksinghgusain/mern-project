@@ -30,6 +30,9 @@ const adminRoutes = require('./routes/admin/admin.route');
 app.use("/api/admin", adminRoutes);
 app.use("/api", frontRoutes);
 
+// static files
+app.use(express.static(path.join(__dirname, 'build')));
+
 // PORT
 const PORT = process.env.PORT || 8000;
 
