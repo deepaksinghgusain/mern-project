@@ -1,22 +1,20 @@
-// import core modules
+// modules
 const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors')
-const path = require('path')
-
-// import files
 
 // app instance
 const app = express();
 
-// static files
-app.use(express.static(path.join(__dirname, 'public')))
-
-// middlewares
-app.use(express.json())
+// middleware
+app.use(express.json());
 app.use(cors())
 
-// database
+// static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// database connect
 mongoose.connect("mongodb+srv://deepakducat:deepakducat@ecommerce.8hfrk6p.mongodb.net/")
         .then(() => {
             console.log("database connection established");
@@ -26,19 +24,16 @@ mongoose.connect("mongodb+srv://deepakducat:deepakducat@ecommerce.8hfrk6p.mongod
         })
 
 // routes
-const adminRoutes = require("./routes/backend/root.route");
-app.use('/admin' , adminRoutes)
+const frontRoutes = require('./routes/front/front.route');
+const adminRoutes = require('./routes/admin/admin.route');
 
-const frontRoutes = require("./routes/frontend/root.route");
-app.use('/api',frontRoutes)
+app.use("/api/admin", adminRoutes);
+app.use("/api", frontRoutes);
 
-// react routes
-app.use(express.static(path.join(__dirname, './build')));
-
-// port
+// PORT
 const PORT = process.env.PORT || 8000;
 
 // server listen
-app.listen(PORT, () => {
-    console.log(`server listening on port ${PORT}`);
+app.listen(PORT, function() {
+    console.log("server listening on port " + PORT);
 })

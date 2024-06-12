@@ -2,24 +2,35 @@ const jwt = require('jsonwebtoken');
 
 const authorization = (req, res, next) => {
     try {
+        let token = req.headers.authorization.split(' ')[1];
 
-        if(req.url.includes('admin') || req.url.includes('cart') || req.url.includes('checkout')) {
-            let decoded = jwt.verify(req.headers.authorization, 'secret');
-
-            if (!decoded) {
+        if (token) {
+            let verifyToken = jwt.verify(token, 'secret');
+            if (verifyToken) {
+                req.data = verifyToken
+                next()
+            } else {
                 return res.json({
-                    status: 404,
-                    message: "Please login first"
+                    error: true,
+                    errorMessage: "token is invalid",
+                    success: false,
+                    message: ""
                 })
             }
+        }else {
+            return res.json({
+                error: true,
+                errorMessage: "Please login first",
+                success: false,
+                message: ""
+            })
         }
-        
-        next();
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
         return res.json({
-            status: 404,
-            message: "Please Login first"
+            error: true,
+            errorMessage: "Please login first",
+            success: false,
+            message: ""
         })
     }
 }
